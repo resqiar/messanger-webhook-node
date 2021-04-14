@@ -1,8 +1,10 @@
 const express = require('express')
 const callSendApi = require('../services/callSendApi')
+const diffDate = require('../services/diffDate')
 const router = express.Router()
 
 let message_counter = 0
+let current_birthdate
 
 router.post('/webhook', (req, res) => {
     const requestBody = req.body
@@ -31,8 +33,6 @@ router.post('/webhook', (req, res) => {
              */
             if (webhook_event.message) {
                 handleMessage(sender_psid, webhook_event.message.text)
-            } else if (webhook_event.postback) {
-                handlePostback(sender_psid, webhook_event.postback);
             }
         })
         res.send('EVENT_RECEIVED')
@@ -53,7 +53,7 @@ handleMessage = (id, received_message) => {
         })
         message_counter = 2;
     } else if (message_counter == 2) {
-        const birthdate = new Date(received_message).toLocaleDateString('en-US')
+        const birthdate = new Date(received_message).toDateString()
 
         if (birthdate === 'Invalid Date') {
             return callSendApi(id, {
@@ -65,6 +65,8 @@ handleMessage = (id, received_message) => {
             "text": `Your birthdate is on ${birthdate}`
         })
 
+        current_birthdate = birthdate
+
         callSendApi(id, {
             "attachment": {
                 "type": "template",
@@ -75,24 +77,45 @@ handleMessage = (id, received_message) => {
                         "buttons": [
                             {
                                 "type": "postback",
-                                "title": "YES!",
-                                "payload": "yes",
+                                "title": "YES",
+                                "payload": "DATE_AHEAD_YES",
                             },
                             {
                                 "type": "postback",
-                                "title": "NO!",
-                                "payload": "no",
+                                "title": "NO",
+                                "payload": "DATE_AHEAD_NO",
                             }
                         ],
                     }]
                 }
             }
         })
+
+        message_counter = 3
+    } else if (message_counter === 3) {
+        const similar_yes_message = ['yes', 'yes!', 'yeah', 'ok', 'y', 'yup', 'yah', 'sure']
+        const similar_no_message = ['no', 'nah', 'not', 'no!', 'not sure', 'n']
+
+        if (similar_yes_message.includes(received_message.toLowerCase())) {
+            const day_ahead = diffDate(new Date.now(), current_birthdate)
+
+            callSendApi(id, {
+                "text": `There are ${day_ahead} days left until your next birthday!`
+            })
+
+            message_counter = 0
+        } else if (similar_no_message.includes(received_message.toLowerCase())) {
+            callSendApi(id, {
+                "text": "Sure, goodbye!"
+            })
+
+            message_counter = 0
+        } else {
+            callSendApi(id, {
+                "text": "I dont know what you say?"
+            })
+        }
     }
-}
-
-handlePostback = (id, received_postback) => {
-
 }
 /**
  * Adds support for GET requests to our webhook
