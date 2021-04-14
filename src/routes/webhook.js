@@ -30,7 +30,7 @@ router.post('/webhook', (req, res) => {
              * pass the event to the appropriate handler function
              */
             if (webhook_event.message) {
-                handleMessage(webhook_event.message.text, sender_psid)
+                handleMessage(sender_psid, webhook_event.message.text)
             } else if (webhook_event.postback) {
                 handlePostback(sender_psid, webhook_event.postback);
             }
@@ -57,13 +57,14 @@ handleMessage = (id, received_message) => {
 
         if (birthdate === 'Invalid Date') {
             return callSendApi(id, {
-                "text": `Invalid date, please make sure it is valid date format, e.g YYYY-MM-DD`
+                "text": "Invalid date, please make sure it is valid date format, e.g YYYY-MM-DD"
             })
         }
 
         callSendApi(id, {
             "text": `Your birthdate is on ${birthdate}`
         })
+
         callSendApi(id, {
             "attachment": {
                 "type": "template",
