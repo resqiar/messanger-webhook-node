@@ -1,8 +1,11 @@
 const express = require('express')
+const callSendApi = require('../services/callSendApi')
 const router = express.Router()
 
 const handleMessage = require('../services/handleMessage')
 const handlePostback = require('../services/handlePostback')
+
+let message_counter = 0
 
 router.post('/webhook', (req, res) => {
     const requestBody = req.body
@@ -30,7 +33,7 @@ router.post('/webhook', (req, res) => {
              * pass the event to the appropriate handler function
              */
             if (webhook_event.message) {
-                handleMessage(sender_psid, webhook_event.message);
+                start(webhook_event.message.text, sender_psid)
             } else if (webhook_event.postback) {
                 handlePostback(sender_psid, webhook_event.postback);
             }
@@ -41,6 +44,24 @@ router.post('/webhook', (req, res) => {
     }
 })
 
+function start(text, id) {
+    if (message_counter == 0) {
+        callSendApi(id, {
+            "text": "Hi! welcome to bot-testing-node, what is your name?"
+        })
+        message_counter = 1;
+    } else if (message_counter == 1) {
+        callSendApi(id, {
+            "text": `Hello ${text}, what is your birthdate? (YYYY-MM-DD)`
+        })
+        message_counter = 2;
+    } else if (message_counter == 2) {
+        callSendApi(id, {
+            "text": `Your birthdate is on ${text}, do you want to know how many days left to your birthday?`
+        })
+        count = 0;
+    }
+}
 /**
  * Adds support for GET requests to our webhook
  * This code adds support for the Messenger Platform's webhook verification to webhook.
