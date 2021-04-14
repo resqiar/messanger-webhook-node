@@ -78,12 +78,12 @@ handleMessage = (id, received_message) => {
                             {
                                 "type": "postback",
                                 "title": "YES",
-                                "payload": "DATE_AHEAD_YES",
+                                "message": "YES",
                             },
                             {
                                 "type": "postback",
                                 "title": "NO",
-                                "payload": "DATE_AHEAD_NO",
+                                "message": "NO",
                             }
                         ],
                     }]
