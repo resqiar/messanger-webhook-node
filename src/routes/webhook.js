@@ -44,75 +44,90 @@ router.post('/webhook', (req, res) => {
 handleMessage = (id, received_message) => {
     if (message_counter == 0) {
         callSendApi(id, {
-            "text": "Hi! welcome to bot-testing-node, what is your name?"
+            text: 'Hi! welcome to bot-testing-node, what is your name?',
         })
-        message_counter = 1;
+        message_counter = 1
     } else if (message_counter == 1) {
         callSendApi(id, {
-            "text": `Hello ${received_message}, when is your birthdate?`
+            text: `Hello ${received_message}, when is your birthdate?`,
         })
-        message_counter = 2;
+        message_counter = 2
     } else if (message_counter == 2) {
         const birthdate = new Date(received_message).toDateString()
 
         if (birthdate === 'Invalid Date') {
             return callSendApi(id, {
-                "text": "Invalid date, please make sure it is valid date format, e.g YYYY-MM-DD"
+                text:
+                    'Invalid date, please make sure it is valid date format, e.g YYYY-MM-DD',
             })
         }
 
         callSendApi(id, {
-            "text": `Your birthdate is on ${birthdate}`
+            text: `Your birthdate is on ${birthdate}`,
         })
 
         current_birthdate = birthdate
 
         callSendApi(id, {
-            "attachment": {
-                "type": "template",
-                "payload": {
-                    "template_type": "generic",
-                    "elements": [{
-                        "title": "Do you want to see how many days ahead to your next birthday?",
-                        "buttons": [
-                            {
-                                "type": "postback",
-                                "title": "YES",
-                                "message": "YES",
-                            },
-                            {
-                                "type": "postback",
-                                "title": "NO",
-                                "message": "NO",
-                            }
-                        ],
-                    }]
-                }
-            }
+            attachment: {
+                type: 'template',
+                payload: {
+                    template_type: 'generic',
+                    elements: [
+                        {
+                            title:
+                                'Do you want to see how many days ahead to your next birthday?',
+                            buttons: [
+                                {
+                                    type: 'message',
+                                    title: 'YES',
+                                    payload: 'YES',
+                                },
+                                {
+                                    type: 'message',
+                                    title: 'NO',
+                                    payload: 'NO',
+                                },
+                            ],
+                        },
+                    ],
+                },
+            },
         })
 
         message_counter = 3
     } else if (message_counter === 3) {
-        const similar_yes_message = ['yes', 'yes!', 'yeah', 'ok', 'y', 'yup', 'yah', 'sure']
+        const similar_yes_message = [
+            'yes',
+            'yes!',
+            'yeah',
+            'ok',
+            'y',
+            'yup',
+            'yah',
+            'sure',
+        ]
         const similar_no_message = ['no', 'nah', 'not', 'no!', 'not sure', 'n']
 
         if (similar_yes_message.includes(received_message.toLowerCase())) {
             const day_ahead = diffDate(new Date.now(), current_birthdate)
 
             callSendApi(id, {
-                "text": `There are ${day_ahead} days left until your next birthday!`
+                text: `There are ${day_ahead} days left until your next birthday!`,
             })
 
             message_counter = 0
-        } else if (similar_no_message.includes(received_message.toLowerCase())) {
+        } else if (
+            similar_no_message.includes(received_message.toLowerCase())
+        ) {
             callSendApi(id, {
-                "text": "Sure, goodbye!"
+                text: 'Sure, goodbye!',
             })
 
             message_counter = 0
         } else {
             callSendApi(id, {
-                "text": "I dont know what you say?"
+                text: 'I dont know what you say?',
             })
         }
     }
