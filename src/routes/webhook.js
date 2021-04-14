@@ -11,13 +11,17 @@ router.post('/webhook', (req, res) => {
     if (requestBody.object === 'page') {
 
         // Iterates over each entry - there may be multiple if batched
-        requestBody.entry.map(entry => {
+        requestBody.entry.forEach(entry => {
             /** 
              * Gets the message. entry.messaging is an array, but 
              * will only ever contain one message, so we get index 0
             */
             const webhook_event = entry.messaging[0];
-            console.log(webhook_event);
+            console.log("webhook_event", webhook_event);
+
+            // SENDER ID
+            const sender_psid = webhook_event.sender.id;
+            console.log('Sender PSID: ' + sender_psid);
         })
         res.send('EVENT_RECEIVED')
     } else {
