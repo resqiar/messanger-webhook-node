@@ -11,7 +11,7 @@ const GENERIC_BUTTON_TEMPLATE = {
                         {
                             type: 'postback',
                             title: 'YES',
-                            payload: 'DATE_AHEAD_NO',
+                            payload: 'DATE_AHEAD_YES',
                         },
                         {
                             type: 'postback',
