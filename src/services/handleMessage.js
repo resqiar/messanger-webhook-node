@@ -1,4 +1,4 @@
-const { MESSAGE_COUNTER, CURRENT_BIRTHDATE, IS_ASKING_FOR_BIRTHDAY } = require("../constants/variables")
+let GLOBAL = require("../constants/variables")
 const { SIMILAR_YES_MESSAGE, SIMILAR_NO_MESSAGE } = require("../constants/similar")
 const GENERIC_BUTTON_TEMPLATE = require("../templates/generics")
 const callSendApi = require("./callSendApi")
@@ -10,23 +10,23 @@ module.exports = handleMessage = (id, received_message) => {
      * are a global variables used to update 
      * the behavior of the applications
      */
-    if (MESSAGE_COUNTER === 0) {
+    if (GLOBAL.MESSAGE_COUNTER === 0) {
         callSendApi(
             id,
             'Hi! welcome to bot-testing-node, what is your name?',
             false
         )
 
-        Object.assign(MESSAGE_COUNTER, 1)
-    } else if (MESSAGE_COUNTER === 1) {
+        GLOBAL.MESSAGE_COUNTER = 1
+    } else if (GLOBAL.MESSAGE_COUNTER === 1) {
         callSendApi(
             id,
             `Hello ${received_message}, when is your birthdate?`,
             false
         )
 
-        Object.assign(MESSAGE_COUNTER, 2)
-    } else if (MESSAGE_COUNTER === 2) {
+        GLOBAL.MESSAGE_COUNTER = 2
+    } else if (GLOBAL.MESSAGE_COUNTER === 2) {
         const birthdate = new Date(received_message)
 
         /**
@@ -54,7 +54,7 @@ module.exports = handleMessage = (id, received_message) => {
          * persist if current user has already saved their birthdate
          * but for the sake of simplicity, i skip that.
          */
-        Object.assign(CURRENT_BIRTHDATE, birthdate)
+        GLOBAL.CURRENT_BIRTHDATE = birthdate
 
         /**
          * Send a template message with a
@@ -63,16 +63,15 @@ module.exports = handleMessage = (id, received_message) => {
          */
         callSendApi(id, GENERIC_BUTTON_TEMPLATE, true)
 
-
-        Object.assign(MESSAGE_COUNTER, 3)
-        Object.assign(IS_ASKING_FOR_BIRTHDAY, true)
-    } else if (MESSAGE_COUNTER === 3 && IS_ASKING_FOR_BIRTHDAY) {
+        GLOBAL.MESSAGE_COUNTER = 3
+        GLOBAL.IS_ASKING_FOR_BIRTHDAY = true
+    } else if (GLOBAL.MESSAGE_COUNTER === 3 && GLOBAL.IS_ASKING_FOR_BIRTHDAY) {
         if (SIMILAR_YES_MESSAGE.includes(received_message.toLowerCase())) {
             /**
              * Compare how many days left to
              * get to the user's birthday
              */
-            const day_ahead = diffDate(CURRENT_BIRTHDATE)
+            const day_ahead = diffDate(GLOBAL.CURRENT_BIRTHDATE)
 
             callSendApi(
                 id,
@@ -80,15 +79,15 @@ module.exports = handleMessage = (id, received_message) => {
                 false
             )
 
-            Object.assign(MESSAGE_COUNTER, 0)
-            Object.assign(IS_ASKING_FOR_BIRTHDAY, false)
+            GLOBAL.MESSAGE_COUNTER = 0
+            GLOBAL.IS_ASKING_FOR_BIRTHDAY = false
         } else if (
             SIMILAR_NO_MESSAGE.includes(received_message.toLowerCase())
         ) {
             callSendApi(id, 'Sure, goodbye!', false)
 
-            Object.assign(MESSAGE_COUNTER, 0)
-            Object.assign(IS_ASKING_FOR_BIRTHDAY, false)
+            GLOBAL.MESSAGE_COUNTER = 0
+            GLOBAL.IS_ASKING_FOR_BIRTHDAY = false
         } else {
             callSendApi(id, 'I dont know what you say?', false)
         }
