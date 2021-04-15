@@ -55,7 +55,6 @@ router.get('/webhook', (req, res) => {
     if (mode && token) {
         if (token === VERIFY_TOKEN && mode === 'subscribe') {
             // Responds with the message from the request
-            console.log('WEBHOOK_VERIFIED')
             res.status(200).send(challenge)
         } else {
             // Responds with '403 Forbidden' if verify tokens do not match
