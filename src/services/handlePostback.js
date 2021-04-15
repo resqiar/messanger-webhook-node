@@ -8,7 +8,7 @@ module.exports = handlePostback = (id, received_postback) => {
              * Compare how many days left to
              * get to the user's birthday
              */
-        const day_ahead = diffDate(CURRENT_BIRTHDATE)
+        const day_ahead = diffDate(GLOBAL.CURRENT_BIRTHDATE)
 
         callSendApi(
             id,
