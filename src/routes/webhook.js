@@ -48,11 +48,19 @@ router.post('/webhook', (req, res) => {
 
 handleMessage = (id, received_message) => {
     if (message_counter === 0) {
-        callSendApi(id, 'Hi! welcome to bot-testing-node, what is your name?')
+        callSendApi(
+            id,
+            'Hi! welcome to bot-testing-node, what is your name?',
+            false
+        )
 
         message_counter = 1
     } else if (message_counter === 1) {
-        callSendApi(id, `Hello ${received_message}, when is your birthdate?`)
+        callSendApi(
+            id,
+            `Hello ${received_message}, when is your birthdate?`,
+            false
+        )
 
         message_counter = 2
     } else if (message_counter === 2) {
@@ -66,11 +74,16 @@ handleMessage = (id, received_message) => {
         if (birthdate === 'Invalid Date') {
             return callSendApi(
                 id,
-                'Invalid date, please make sure it is valid date format, e.g YYYY-MM-DD'
+                'Invalid date, please make sure it is valid date format, e.g YYYY-MM-DD',
+                false
             )
         }
 
-        callSendApi(id, `Your birthdate is on ${birthdate.toDateString()}`)
+        callSendApi(
+            id,
+            `Your birthdate is on ${birthdate.toDateString()}`,
+            false
+        )
 
         /**
          * Update user current birthdate
@@ -85,7 +98,7 @@ handleMessage = (id, received_message) => {
          * button, "YES" or "NO"
          * @see src/templates/generics
          */
-        callSendApi(id, GENERIC_BUTTON_TEMPLATE)
+        callSendApi(id, GENERIC_BUTTON_TEMPLATE, true)
 
         message_counter = 3
     } else if (message_counter === 3) {
@@ -98,18 +111,19 @@ handleMessage = (id, received_message) => {
 
             callSendApi(
                 id,
-                `There are ${day_ahead} days left until your next birthday!`
+                `There are ${day_ahead} days left until your next birthday!`,
+                false
             )
 
             message_counter = 0
         } else if (
             SIMILAR_NO_MESSAGE.includes(received_message.toLowerCase())
         ) {
-            callSendApi(id, 'Sure, goodbye!')
+            callSendApi(id, 'Sure, goodbye!', false)
 
             message_counter = 0
         } else {
-            callSendApi(id, 'I dont know what you say?')
+            callSendApi(id, 'I dont know what you say?', false)
         }
     }
 }

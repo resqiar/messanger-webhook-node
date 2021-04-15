@@ -1,15 +1,23 @@
 const axios = require('axios')
 
 // Handles messaging_postbacks events
-module.exports = callSendApi = (sender_psid, response) => {
+module.exports = callSendApi = (sender_psid, response, isCustomTemplate) => {
+    let defaultResponse = {
+        text: response
+    }
+
+    if (isCustomTemplate) {
+        defaultResponse = {
+            response
+        }
+    }
+
     // message body
     const request_body = {
         recipient: {
             id: sender_psid
         },
-        message: {
-            text: response
-        }
+        message: defaultResponse
     }
 
     // request URL
