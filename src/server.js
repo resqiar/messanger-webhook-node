@@ -20,6 +20,11 @@ app.use(morgan('dev'))
 app.use(require('./routes/webhook'))
 
 /**
+ * @Route path for http endpoint
+ */
+app.use(require('./routes/http-endpoints'))
+
+/**
  * @Listen incoming connections on PORT
  */
 app.listen(PORT, console.log(`RUNNING ON PORT:${PORT}`))
