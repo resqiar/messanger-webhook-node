@@ -7,7 +7,7 @@ router.get('/messages', async (req, res) => {
     res.send(await Message.find())
 })
 
-router.get('/messages?_id=:id', async (req, res) => {
+router.get('/message/:id', async (req, res) => {
     const { id } = req.params
 
     /**
@@ -20,7 +20,7 @@ router.get('/messages?_id=:id', async (req, res) => {
     res.send(result)
 })
 
-router.delete('/messages?_id=:id', async (req, res) => {
+router.delete('/message/:id', async (req, res) => {
     const { id } = req.params
 
     /**
