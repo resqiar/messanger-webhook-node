@@ -1,4 +1,3 @@
-const { MESSAGE_COUNTER, CURRENT_BIRTHDATE, IS_ASKING_FOR_BIRTHDAY } = require("../constants/variables")
 const callSendApi = require("./callSendApi")
 const diffDate = require("./diffDate")
 

@@ -1,4 +1,3 @@
-const { MESSAGE_COUNTER, CURRENT_BIRTHDATE, IS_ASKING_FOR_BIRTHDAY } = require("../constants/variables")
 const { SIMILAR_YES_MESSAGE, SIMILAR_NO_MESSAGE } = require("../constants/similar")
 const GENERIC_BUTTON_TEMPLATE = require("../templates/generics")
 const callSendApi = require("./callSendApi")
@@ -17,7 +16,7 @@ module.exports = handleMessage = (id, received_message) => {
             false
         )
 
-        console.log("message_counter", MESSAGE_COUNTER);
+        MESSAGE_COUNTER = 1
     } else if (MESSAGE_COUNTER === 1) {
         callSendApi(
             id,
