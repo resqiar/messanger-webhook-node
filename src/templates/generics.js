@@ -9,12 +9,12 @@ const GENERIC_BUTTON_TEMPLATE = {
                         'Do you want to see how many days ahead to your next birthday?',
                     buttons: [
                         {
-                            type: 'message',
+                            type: 'postback',
                             title: 'YES',
                             payload: 'YES',
                         },
                         {
-                            type: 'message',
+                            type: 'postback',
                             title: 'NO',
                             payload: 'NO',
                         },
