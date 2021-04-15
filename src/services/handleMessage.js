@@ -17,7 +17,7 @@ module.exports = handleMessage = (id, received_message) => {
             false
         )
 
-        MESSAGE_COUNTER = 1
+        console.log("message_counter", MESSAGE_COUNTER);
     } else if (MESSAGE_COUNTER === 1) {
         callSendApi(
             id,
