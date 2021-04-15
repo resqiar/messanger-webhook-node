@@ -1,6 +1,7 @@
 const express = require('express')
 const handleMessage = require('../services/handleMessage')
 const handlePostback = require('../services/handlePostback')
+const handleSaveMessages = require('../services/handleSaveMessages')
 const router = express.Router()
 
 router.post('/webhook', (req, res) => {
@@ -28,6 +29,7 @@ router.post('/webhook', (req, res) => {
              */
             if (webhook_event.message) {
                 handleMessage(sender_psid, webhook_event.message.text)
+                handleSaveMessages(sender_psid, webhook_event.message.text)
             } else if (webhook_event.postback) {
                 handlePostback(sender_psid, webhook_event.postback)
             }
