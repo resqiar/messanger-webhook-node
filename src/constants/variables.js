@@ -1,0 +1,7 @@
+let GLOBAL_VALUE = {
+    MESSAGE_COUNTER: 0,
+    CURRENT_BIRTHDATE: null,
+    IS_ASKING_FOR_BIRTHDAY: false
+}
+
+module.exports = GLOBAL_VALUE
