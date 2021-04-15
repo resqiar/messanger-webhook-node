@@ -72,8 +72,8 @@ handleMessage = (id, received_message) => {
          * a correct one
          */
         console.log("birthdate", birthdate)
-        console.log(birthdate === 'Invalid Date')
-        if (birthdate === 'Invalid Date') {
+        console.log(birthdate.toString() === 'Invalid Date')
+        if (birthdate.toString() === 'Invalid Date') {
             return callSendApi(
                 id,
                 'Invalid date, please make sure it is valid date format, e.g YYYY-MM-DD',
