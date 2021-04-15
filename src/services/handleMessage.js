@@ -1,3 +1,4 @@
+const { MESSAGE_COUNTER, CURRENT_BIRTHDATE, IS_ASKING_FOR_BIRTHDAY } = require("../constants/variables")
 const { SIMILAR_YES_MESSAGE, SIMILAR_NO_MESSAGE } = require("../constants/similar")
 const GENERIC_BUTTON_TEMPLATE = require("../templates/generics")
 const callSendApi = require("./callSendApi")
@@ -16,7 +17,7 @@ module.exports = handleMessage = (id, received_message) => {
             false
         )
 
-        MESSAGE_COUNTER = 1
+        Object.assign(MESSAGE_COUNTER, 1)
     } else if (MESSAGE_COUNTER === 1) {
         callSendApi(
             id,
@@ -24,7 +25,7 @@ module.exports = handleMessage = (id, received_message) => {
             false
         )
 
-        MESSAGE_COUNTER = 2
+        Object.assign(MESSAGE_COUNTER, 2)
     } else if (MESSAGE_COUNTER === 2) {
         const birthdate = new Date(received_message)
 
@@ -53,7 +54,7 @@ module.exports = handleMessage = (id, received_message) => {
          * persist if current user has already saved their birthdate
          * but for the sake of simplicity, i skip that.
          */
-        CURRENT_BIRTHDATE = birthdate
+        Object.assign(CURRENT_BIRTHDATE, birthdate)
 
         /**
          * Send a template message with a
@@ -62,8 +63,9 @@ module.exports = handleMessage = (id, received_message) => {
          */
         callSendApi(id, GENERIC_BUTTON_TEMPLATE, true)
 
-        MESSAGE_COUNTER = 3
-        IS_ASKING_FOR_BIRTHDAY = true
+
+        Object.assign(MESSAGE_COUNTER, 3)
+        Object.assign(IS_ASKING_FOR_BIRTHDAY, true)
     } else if (MESSAGE_COUNTER === 3 && IS_ASKING_FOR_BIRTHDAY) {
         if (SIMILAR_YES_MESSAGE.includes(received_message.toLowerCase())) {
             /**
@@ -78,15 +80,15 @@ module.exports = handleMessage = (id, received_message) => {
                 false
             )
 
-            MESSAGE_COUNTER = 0
-            IS_ASKING_FOR_BIRTHDAY = false
+            Object.assign(MESSAGE_COUNTER, 0)
+            Object.assign(IS_ASKING_FOR_BIRTHDAY, false)
         } else if (
             SIMILAR_NO_MESSAGE.includes(received_message.toLowerCase())
         ) {
             callSendApi(id, 'Sure, goodbye!', false)
 
-            MESSAGE_COUNTER = 0
-            IS_ASKING_FOR_BIRTHDAY = false
+            Object.assign(MESSAGE_COUNTER, 0)
+            Object.assign(IS_ASKING_FOR_BIRTHDAY, false)
         } else {
             callSendApi(id, 'I dont know what you say?', false)
         }

@@ -1,3 +1,4 @@
+const { MESSAGE_COUNTER, CURRENT_BIRTHDATE, IS_ASKING_FOR_BIRTHDAY } = require("../constants/variables")
 const callSendApi = require("./callSendApi")
 const diffDate = require("./diffDate")
 
@@ -15,12 +16,12 @@ module.exports = handlePostback = (id, received_postback) => {
             false
         )
 
-        MESSAGE_COUNTER = 0
-        IS_ASKING_FOR_BIRTHDAY = false
+        Object.assign(MESSAGE_COUNTER, 0)
+        Object.assign(IS_ASKING_FOR_BIRTHDAY, false)
     } else if (received_postback.payload === 'DATE_AHEAD_NO') {
         callSendApi(id, 'Sure, goodbye!', false)
 
-        MESSAGE_COUNTER = 0
-        IS_ASKING_FOR_BIRTHDAY = false
+        Object.assign(MESSAGE_COUNTER, 0)
+        Object.assign(IS_ASKING_FOR_BIRTHDAY, false)
     }
 }
