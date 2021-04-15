@@ -9,7 +9,7 @@ module.exports = callSendApi = (sender_psid, response, isCustomTemplate) => {
     if (isCustomTemplate) {
         defaultResponse = response
     }
-
+    console.log('response', defaultResponse);
     // message body
     const request_body = {
         recipient: {
