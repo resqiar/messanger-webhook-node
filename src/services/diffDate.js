@@ -1,12 +1,17 @@
-module.exports = diffDate = (date1, date2) => {
-
+module.exports = diffDate = (birthDate) => {
     // The number of milliseconds in one day
-    const ONE_DAY = 1000 * 60 * 60 * 24;
+    const ONE_DAY = 1000 * 60 * 60 * 24
 
-    // Calculate the difference in milliseconds
-    const differenceMs = Math.abs(date1 - date2);
+    // current date to compare
+    const current_date = new Date()
 
-    // Convert back to days and return
-    return Math.round(differenceMs / ONE_DAY);
+    // convert birthdate to current year date
+    const date_ahead = new Date(
+        current_date.getUTCFullYear(),
+        birthDate.getUTCMonth(),
+        birthDate.getUTCDate()
+    )
 
+    // compare days
+    return Math.round(Math.abs((current_date - date_ahead) / ONE_DAY))
 }

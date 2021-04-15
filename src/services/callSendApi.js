@@ -7,7 +7,9 @@ module.exports = callSendApi = (sender_psid, response) => {
         recipient: {
             id: sender_psid
         },
-        message: response
+        message: {
+            text: response
+        }
     }
 
     // request URL

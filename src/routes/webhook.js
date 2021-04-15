@@ -1,6 +1,11 @@
 const express = require('express')
+const {
+    SIMILAR_YES_MESSAGE,
+    SIMILAR_NO_MESSAGE,
+} = require('../constants/similar')
 const callSendApi = require('../services/callSendApi')
 const diffDate = require('../services/diffDate')
+const GENERIC_BUTTON_TEMPLATE = require('../templates/generics')
 const router = express.Router()
 
 let message_counter = 0
@@ -42,93 +47,69 @@ router.post('/webhook', (req, res) => {
 })
 
 handleMessage = (id, received_message) => {
-    if (message_counter == 0) {
-        callSendApi(id, {
-            text: 'Hi! welcome to bot-testing-node, what is your name?',
-        })
-        message_counter = 1
-    } else if (message_counter == 1) {
-        callSendApi(id, {
-            text: `Hello ${received_message}, when is your birthdate?`,
-        })
-        message_counter = 2
-    } else if (message_counter == 2) {
-        const birthdate = new Date(received_message).toDateString()
+    if (message_counter === 0) {
+        callSendApi(id, 'Hi! welcome to bot-testing-node, what is your name?')
 
+        message_counter = 1
+    } else if (message_counter === 1) {
+        callSendApi(id, `Hello ${received_message}, when is your birthdate?`)
+
+        message_counter = 2
+    } else if (message_counter === 2) {
+        const birthdate = new Date(received_message)
+
+        /**
+         * If received date is invalid date
+         * return back a message to provide
+         * a correct one
+         */
         if (birthdate === 'Invalid Date') {
-            return callSendApi(id, {
-                text:
-                    'Invalid date, please make sure it is valid date format, e.g YYYY-MM-DD',
-            })
+            return callSendApi(
+                id,
+                'Invalid date, please make sure it is valid date format, e.g YYYY-MM-DD'
+            )
         }
 
-        callSendApi(id, {
-            text: `Your birthdate is on ${birthdate}`,
-        })
+        callSendApi(id, `Your birthdate is on ${birthdate.toDateString()}`)
 
+        /**
+         * Update user current birthdate
+         * this should be saved with senderId to
+         * persist if current user has already saved their birthdate
+         * but for the sake of simplicity, i skip that.
+         */
         current_birthdate = birthdate
 
-        callSendApi(id, {
-            attachment: {
-                type: 'template',
-                payload: {
-                    template_type: 'generic',
-                    elements: [
-                        {
-                            title:
-                                'Do you want to see how many days ahead to your next birthday?',
-                            buttons: [
-                                {
-                                    type: 'message',
-                                    title: 'YES',
-                                    payload: 'YES',
-                                },
-                                {
-                                    type: 'message',
-                                    title: 'NO',
-                                    payload: 'NO',
-                                },
-                            ],
-                        },
-                    ],
-                },
-            },
-        })
+        /**
+         * Send a template message with a
+         * button, "YES" or "NO"
+         * @see src/templates/generics
+         */
+        callSendApi(id, GENERIC_BUTTON_TEMPLATE)
 
         message_counter = 3
     } else if (message_counter === 3) {
-        const similar_yes_message = [
-            'yes',
-            'yes!',
-            'yeah',
-            'ok',
-            'y',
-            'yup',
-            'yah',
-            'sure',
-        ]
-        const similar_no_message = ['no', 'nah', 'not', 'no!', 'not sure', 'n']
+        if (SIMILAR_YES_MESSAGE.includes(received_message.toLowerCase())) {
+            /**
+             * Compare how many days left to
+             * get to the user's birthday
+             */
+            const day_ahead = diffDate(current_birthdate)
 
-        if (similar_yes_message.includes(received_message.toLowerCase())) {
-            const day_ahead = diffDate(new Date.now(), current_birthdate)
-
-            callSendApi(id, {
-                text: `There are ${day_ahead} days left until your next birthday!`,
-            })
+            callSendApi(
+                id,
+                `There are ${day_ahead} days left until your next birthday!`
+            )
 
             message_counter = 0
         } else if (
-            similar_no_message.includes(received_message.toLowerCase())
+            SIMILAR_NO_MESSAGE.includes(received_message.toLowerCase())
         ) {
-            callSendApi(id, {
-                text: 'Sure, goodbye!',
-            })
+            callSendApi(id, 'Sure, goodbye!')
 
             message_counter = 0
         } else {
-            callSendApi(id, {
-                text: 'I dont know what you say?',
-            })
+            callSendApi(id, 'I dont know what you say?')
         }
     }
 }
