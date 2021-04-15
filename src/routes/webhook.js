@@ -10,6 +10,7 @@ const router = express.Router()
 
 let message_counter = 0
 let current_birthdate
+let isAskingForBirthday = false
 
 router.post('/webhook', (req, res) => {
     const requestBody = req.body
@@ -38,6 +39,8 @@ router.post('/webhook', (req, res) => {
              */
             if (webhook_event.message) {
                 handleMessage(sender_psid, webhook_event.message.text)
+            } else if (webhook_event.postback) {
+                handlePostback(sender_psid, webhook_event.postback)
             }
         })
         res.send('EVENT_RECEIVED')
@@ -71,8 +74,6 @@ handleMessage = (id, received_message) => {
          * return back a message to provide
          * a correct one
          */
-        console.log("birthdate", birthdate)
-        console.log(birthdate.toString() === 'Invalid Date')
         if (birthdate.toString() === 'Invalid Date') {
             return callSendApi(
                 id,
@@ -103,7 +104,8 @@ handleMessage = (id, received_message) => {
         callSendApi(id, GENERIC_BUTTON_TEMPLATE, true)
 
         message_counter = 3
-    } else if (message_counter === 3) {
+        isAskingForBirthday = true
+    } else if (message_counter === 3 && isAskingForBirthday) {
         if (SIMILAR_YES_MESSAGE.includes(received_message.toLowerCase())) {
             /**
              * Compare how many days left to
@@ -118,15 +120,41 @@ handleMessage = (id, received_message) => {
             )
 
             message_counter = 0
+            isAskingForBirthday = false
         } else if (
             SIMILAR_NO_MESSAGE.includes(received_message.toLowerCase())
         ) {
             callSendApi(id, 'Sure, goodbye!', false)
 
             message_counter = 0
+            isAskingForBirthday = false
         } else {
             callSendApi(id, 'I dont know what you say?', false)
         }
+    }
+}
+
+handlePostback = (id, received_postback) => {
+    if (received_postback.payload === 'DATE_AHEAD_YES') {
+        /**
+             * Compare how many days left to
+             * get to the user's birthday
+             */
+        const day_ahead = diffDate(current_birthdate)
+
+        callSendApi(
+            id,
+            `There are ${day_ahead} days left until your next birthday!`,
+            false
+        )
+
+        message_counter = 0
+        isAskingForBirthday = false
+    } else if (received_postback.payload === 'DATE_AHEAD_NO') {
+        callSendApi(id, 'Sure, goodbye!', false)
+
+        message_counter = 0
+        isAskingForBirthday = false
     }
 }
 /**

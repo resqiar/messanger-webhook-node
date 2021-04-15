@@ -11,12 +11,12 @@ const GENERIC_BUTTON_TEMPLATE = {
                         {
                             type: 'postback',
                             title: 'YES',
-                            payload: 'YES',
+                            payload: 'DATE_AHEAD_NO',
                         },
                         {
                             type: 'postback',
                             title: 'NO',
-                            payload: 'NO',
+                            payload: 'DATE_AHEAD_NO',
                         },
                     ],
                 },
