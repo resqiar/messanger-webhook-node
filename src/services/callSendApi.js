@@ -7,9 +7,7 @@ module.exports = callSendApi = (sender_psid, response, isCustomTemplate) => {
     }
 
     if (isCustomTemplate) {
-        defaultResponse = {
-            response
-        }
+        defaultResponse = response
     }
 
     // message body
@@ -27,6 +25,6 @@ module.exports = callSendApi = (sender_psid, response, isCustomTemplate) => {
     axios.post(REQUEST_URL, request_body).then(() => {
         console.log('message sent!')
     }).catch(err => {
-        console.error("Unable to send message:" + err);
+        console.error("Unable to send message:" + err.detail);
     })
 }
